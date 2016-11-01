@@ -35,10 +35,10 @@ class GithubAPIClient {
         request.httpMethod = "GET"
         let configuration = URLSessionConfiguration.default
         let session = URLSession(configuration: configuration)
-        let task = session.dataTask(with: url!, completionHandler: { data, response, error in
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
             
             if let response = response as? HTTPURLResponse {
-                
+                 print("RESPONSE : \(response.statusCode)")
                 if response.statusCode == 204 {
                     OperationQueue.main.addOperation {
                         completion(true)
@@ -62,7 +62,7 @@ class GithubAPIClient {
         request.setValue("0", forHTTPHeaderField: "Content-Length")
         let configuration = URLSessionConfiguration.default
         let session = URLSession(configuration: configuration)
-        let task = session.dataTask(with: url!, completionHandler: { data, response, error in
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
             
             if let response = response as? HTTPURLResponse {
                 if response.statusCode == 204 {
@@ -87,7 +87,7 @@ class GithubAPIClient {
         request.httpMethod = "DELETE"
         let configuration = URLSessionConfiguration.default
         let session = URLSession(configuration: configuration)
-        let task = session.dataTask(with: url!, completionHandler: { data, response, error in
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
             
             if let response = response as? HTTPURLResponse {
                 if response.statusCode == 204 {

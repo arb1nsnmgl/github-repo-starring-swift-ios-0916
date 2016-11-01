@@ -32,7 +32,7 @@ class ReposDataStore {
         
         
         GithubAPIClient.checkIfRepositoryIsStarred(user.fullName, with: { status in
-            print(status)
+            
             if status {
                 GithubAPIClient.unstarRepository(named: user.fullName, completion: {
                     OperationQueue.main.addOperation {
@@ -44,7 +44,6 @@ class ReposDataStore {
                     OperationQueue.main.addOperation {
                         completion(true)
                     }
-                    
                 })
             }
             
