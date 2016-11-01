@@ -27,5 +27,30 @@ class ReposDataStore {
             completion()
         }
     }
-
+    
+    func toggleStarStatus(for user: GithubRepository, completion: @escaping (_ starred: Bool) -> ()) {
+        
+        
+        GithubAPIClient.checkIfRepositoryIsStarred(user.fullName, with: { status in
+            print(status)
+            if status {
+                GithubAPIClient.unstarRepository(named: user.fullName, completion: {
+                    OperationQueue.main.addOperation {
+                        completion(false)
+                    }
+                })
+            } else {
+                GithubAPIClient.starRepository(named: user.fullName, completion: {
+                    OperationQueue.main.addOperation {
+                        completion(true)
+                    }
+                    
+                })
+            }
+            
+        })
+        
+    }
+    
+    
 }

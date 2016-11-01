@@ -10,8 +10,8 @@ import UIKit
 
 class GithubAPIClient {
     
-    class func getRepositoriesWithCompletion(_ completion: @escaping ([Any]) -> ()) {
-        let urlString = "\(githubAPIURL)/repositories?client_id=\(githubClientID)&client_secret=\(githubClientSecret)"
+    class func getRepositoriesWithCompletion(with completion: @escaping ([Any]) -> ()) {
+        let urlString = "\(Secrets.githubAPIURL)/repositories?client_id=\(Secrets.githubClientID)&client_secret=\(Secrets.githubClientSecret)"
         let url = URL(string: urlString)
         let session = URLSession.shared
         
@@ -28,5 +28,82 @@ class GithubAPIClient {
         task.resume()
     }
     
+    class func checkIfRepositoryIsStarred(_ fullName: String, with completion: @escaping (Bool) -> ()) {
+        
+        let url  = URL(string: "\(Secrets.githubAPIURL)/user/starred/\(fullName)?access_token=\(Secrets.personalToken)")
+        var request = URLRequest(url: url!)
+        request.httpMethod = "GET"
+        let configuration = URLSessionConfiguration.default
+        let session = URLSession(configuration: configuration)
+        let task = session.dataTask(with: url!, completionHandler: { data, response, error in
+            
+            if let response = response as? HTTPURLResponse {
+                
+                if response.statusCode == 204 {
+                    OperationQueue.main.addOperation {
+                        completion(true)
+                    }
+                } else if response.statusCode == 404 {
+                    OperationQueue.main.addOperation {
+                        completion(false)
+                    }
+                }
+            }
+        })
+        task.resume()
+        
+    }
+    
+    class func starRepository(named: String, completion: @escaping () -> ()) {
+        
+        let url  = URL(string: "\(Secrets.githubAPIURL)/user/starred/\(named)?access_token=\(Secrets.personalToken)")
+        var request = URLRequest(url: url!)
+        request.httpMethod = "PUT"
+        request.setValue("0", forHTTPHeaderField: "Content-Length")
+        let configuration = URLSessionConfiguration.default
+        let session = URLSession(configuration: configuration)
+        let task = session.dataTask(with: url!, completionHandler: { data, response, error in
+            
+            if let response = response as? HTTPURLResponse {
+                if response.statusCode == 204 {
+                    OperationQueue.main.addOperation {
+                        completion()
+                    }
+                } else if response.statusCode == 404 {
+                    OperationQueue.main.addOperation {
+                        completion()
+                    }
+                }
+            }
+        })
+        task.resume()
+        
+    }
+    
+    class func unstarRepository(named: String, completion: @escaping () -> ()) {
+        
+        let url  = URL(string: "\(Secrets.githubAPIURL)/user/starred/\(named)?access_token=\(Secrets.personalToken)")
+        var request = URLRequest(url: url!)
+        request.httpMethod = "DELETE"
+        let configuration = URLSessionConfiguration.default
+        let session = URLSession(configuration: configuration)
+        let task = session.dataTask(with: url!, completionHandler: { data, response, error in
+            
+            if let response = response as? HTTPURLResponse {
+                if response.statusCode == 204 {
+                    OperationQueue.main.addOperation {
+                        completion()
+                    }
+                } else if response.statusCode == 404 {
+                    OperationQueue.main.addOperation {
+                        completion()
+                    }
+                }
+            }
+        })
+        task.resume()
+        
+    }
+   
 }
 
